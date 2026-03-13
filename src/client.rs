@@ -2,9 +2,14 @@ use anyhow::{Context, Result};
 use nvim_rs::create::tokio::new_path;
 use nvim_rs::rpc::handler::Dummy as DummyHandler;
 
+#[cfg(unix)]
+type Connection = tokio::net::UnixStream;
+#[cfg(windows)]
+type Connection = tokio::net::windows::named_pipe::NamedPipeClient;
+
 pub struct NvimClient {
     nvim: nvim_rs::Neovim<
-        nvim_rs::compat::tokio::Compat<tokio::io::WriteHalf<tokio::net::UnixStream>>,
+        nvim_rs::compat::tokio::Compat<tokio::io::WriteHalf<Connection>>,
     >,
     _io_handle: tokio::task::JoinHandle<Result<(), Box<nvim_rs::error::LoopError>>>,
 }
