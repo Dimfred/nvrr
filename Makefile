@@ -18,10 +18,10 @@ build-macos: ## cross-compile for macOS (arm64)
 	cargo build --release --target aarch64-apple-darwin
 
 build-linux: ## cross-compile for Linux (x86_64)
-	cargo build --release --target x86_64-unknown-linux-gnu
+	cargo zigbuild --release --target x86_64-unknown-linux-gnu
 
 build-windows: ## cross-compile for Windows (x86_64)
-	cargo build --release --target x86_64-pc-windows-gnu
+	cargo zigbuild --release --target x86_64-pc-windows-gnu
 
 run: ## run the project
 	cargo run
@@ -119,6 +119,13 @@ brew-update: ## update brew formula and push to homebrew-tap
 	cp Formula/$(PROJECT_NAME).rb ../homebrew-tap/Formula/; \
 	cd ../homebrew-tap && git add . && git commit -m "Update $(PROJECT_NAME) to v$$VERSION" && git push; \
 	echo "Pushed to homebrew-tap"
+
+################################################################################
+# INIT
+init: ## initialize dev environment (rust targets, zigbuild)
+	brew install zig@0.14
+	rustup target add aarch64-apple-darwin x86_64-unknown-linux-gnu x86_64-pc-windows-gnu
+	cargo install cargo-zigbuild
 
 ################################################################################
 # HELP
